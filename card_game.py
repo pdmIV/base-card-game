@@ -1,7 +1,5 @@
 import random
 from collections import deque
-colors = ['clubs', 'spades', 'gold coins', 'cups']
-values = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 
 
 class Card:
@@ -15,13 +13,14 @@ class Card:
 
 class Deck:
     def __init__(self, shuffled=False):
-        global colors
-        global values
+        self.colors = ['clubs', 'spades', 'gold coins', 'cups']
+        self.values = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+        self.num_cards_in_deck = 40
 
         self.cards = deque()
 
-        for color in colors:
-            for value in values:
+        for color in self.colors:
+            for value in self.values:
                 self.cards.append(Card(color, value))
         
         if shuffled:
@@ -61,11 +60,15 @@ class Game:
         self.players.append(Player(name))
 
     def deal(self, amount=1):
-        amt = amount
-        while amt > 0:
-            for p in self.players:
-                p.recieve_card(self.deck.cards.popleft())
-            amt -= 1
+        if amount <= self.deck.num_cards_in_deck:
+            amt = amount
+            while amt > 0:
+                for p in self.players:
+                    p.recieve_card(self.deck.cards.popleft())
+                    self.deck.num_cards_in_deck -= 1
+                amt -= 1
+        else:
+            print("Not enough cards in deck to deal (possibly an error?)")
 
     def shuffle_deck(self):
         self.deck.shuffle()
